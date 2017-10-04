@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# xe_auto_net_configure
+#
+# PROVIDE: xe_auto_net_configure
+# REQUIRE: NETWORKING
+ 
+ 
+. /etc/rc.subr
+ 
+name="xe_auto_net_configure"
+rcvar="xe_auto_net_configure_enable"
+stop_cmd=":"
+start_cmd="xe_auto_net_configure_start"
+ 
+xe_auto_net_configure_start()
+{
+ 
+    /usr/local/sbin/xe-set-network
+}
+ 
+load_rc_config $name
+run_rc_command "$1"

@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# xe-set-network
+#
+ 
+[ -e /usr/local/bin/xenstore-read ] || exit 0
+ 
+NAME=`/usr/local/bin/xenstore-read name`
+DOMAIN=`/usr/local/bin/xenstore-read vm-data/dm`
+ 
+IP=`/usr/local/bin/xenstore-read vm-data/ip`
+GW=`/usr/local/bin/xenstore-read vm-data/gw`
+NM=`/usr/local/bin/xenstore-read vm-data/nm`
+NS=`/usr/local/bin/xenstore-read vm-data/ns`
+DM=`/usr/local/bin/xenstore-read vm-data/dm`
+ 
+[ "$NAME" = "" ] && exit 0
+[ "$IP" = "" ] && exit 0
+[ "$GW" = "" ] && exit 0
+[ "$NM" = "" ] && exit 0
+[ "$NS" = "" ] && exit 0
+ 
+# stoping network I/F
+/usr/sbin/service netif stop
+ 
+# change host
+if [ "$DOMAIN" = "" ]; then 
+  FULLHOST=$NAME
+else
+  FULLHOST=$NAME.$DOMAIN
+fi
+hostname $FULLHOST
+/usr/sbin/sysrc hostname="$FULLHOST"
+ 
+# change IP
+/usr/sbin/sysrc ifconfig_xn0="inet $IP netmask $NM"
+/usr/sbin/sysrc defaultrouter="$GW"
+ 
+# change /etc/hosts
+cp /etc/hosts /etc/hosts.`/bin/date +%Y%m%d-%H%M`
+ 
+cat << EOF > /etc/hosts
+127.0.0.1       localhost
+$IP     $FULLHOST   $NAME
+EOF
+ 
+# change nameserver
+/bin/cp /etc/resolv.conf /etc/resolv.conf.`/bin/date +%Y%m%d-%H%M`
+ 
+/bin/cat << EOF > /etc/resolv.conf
+search $DOMAIN
+nameserver $NS
+EOF
+ 
+# restarting network start
+/etc/netstart
+ 
+# bootup script off
+/usr/sbin/sysrc xe_auto_net_configure_enable="NO"
