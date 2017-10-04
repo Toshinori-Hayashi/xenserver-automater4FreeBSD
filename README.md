@@ -18,7 +18,7 @@ Copy usr/local/etc/rc.d/xe_* into /usr/local/etc/rc.d/ and chmod +x
 
 ## Creating a template
 
-  # xe vm-param-set uuid=VM_UUID is-a-template=true
+    # xe vm-param-set uuid=VM_UUID is-a-template=true
 
 ## Create virtual machine
 
