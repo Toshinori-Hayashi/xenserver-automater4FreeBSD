@@ -22,9 +22,9 @@ Copy usr/local/etc/rc.d/xe_* into /usr/local/etc/rc.d/ and chmod +x
 
 ## Create virtual machine
 
-    # xe vm-install template=Temolate_UUID new-name-label=VM_name
+    # xe vm-install template=template_UUID new-name-label=VM_name
       OR
-    # xe vm-install template=temprate_name new-name-label=VM_name
+    # xe vm-install template=template_name new-name-label=VM_name
 
 ## Set up network information
 
